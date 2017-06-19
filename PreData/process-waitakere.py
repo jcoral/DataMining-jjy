@@ -15,15 +15,6 @@ def cleaningData(lines):
         if index % 2 == 1 and intitem == 0:
             intitem = 1
         gdata.append(intitem)
-        # if itemLength <= 1:
-        #     gdata.append(int(item))
-        #     continue
-        # gitem = item[0]
-        # for index in range(1, itemLength):
-        #     if index % 2 == 1 and item[index] == '0':
-        #         gitem += "1"
-        #     else:
-        #         gitem += item[index]
 
     gdata.sort()
     return gdata
@@ -70,7 +61,7 @@ def smoothDataSet(gdata, tlength = 10, smoothFuc = avgSmooth):
     """
 
     import math
-    length = math.ceil(float(len(gdata)) / float(tlength))
+    length = int(math.ceil(float(len(gdata)) / float(tlength)))
 
     gdataLength = len(gdata)
     smoothData = list()
@@ -92,7 +83,11 @@ if __name__ == "__main__":
     import util.fileoperate as fop
     gdata = cleaningData(fop.getLines("../dataset/waitakere.txt"))
     # print(gdata)
-    print smoothDataSet(gdata=gdata, tlength=100, smoothFuc=edgeSmooth)
+    smoothFuncs = [equalLengthSmooth, avgSmooth, edgeSmooth]
+    smoothFuncName = ["等频光滑", "平均值光滑", "箱边界光滑"]
+    for fun, name in zip(smoothFuncs, smoothFuncName):
+        print "\n\n" + "+" * 30 + "  使用" + name + "  " + "+" * 30 + "\n"
+        print smoothDataSet(gdata=gdata, tlength=100, smoothFuc=fun)
 
 
 
