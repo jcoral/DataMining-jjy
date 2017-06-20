@@ -5,9 +5,10 @@ import hashlib
 
 def generateFreItemSet(freItemSet, originData, minSupport):
     """
-
-    :param freItemSet: [i1, i2, ...]频繁项集
-    :return:
+    使用hash求频繁项集
+    :param freItemSet: [i1, i2, ...] 频繁项集
+    :param minSupport: 最小支持度
+    :return: [item: times, ...]
     """
 
     # [md5(item): [item: times, item: times, ...]]
@@ -61,25 +62,25 @@ def generateFreItemSet(freItemSet, originData, minSupport):
     return allFreItemSet
 
 
+if __name__ == "__main__":
+
+    import Apriori as apriori
+
+    originData = [
+        set(["I1", "I2", "I5"]),
+        set(["I2", "I4"]),
+        set(["I2", "I3"]),
+        set(["I1", "I2", "I4"]),
+        set(["I1", "I3"]),
+        set(["I2", "I3"]),
+        set(["I1", "I3"]),
+        set(["I1", "I2", "I3", "I5"]),
+        set(["I1", "I2", "I3"])
+    ]
+    freFirstItemSet = apriori.generateFirstCandSet(originData)
 
 
-import Apriori as apriori
-
-originData = [
-    set(["I1", "I2", "I5"]),
-    set(["I2", "I4"]),
-    set(["I2", "I3"]),
-    set(["I1", "I2", "I4"]),
-    set(["I1", "I3"]),
-    set(["I2", "I3"]),
-    set(["I1", "I3"]),
-    set(["I1", "I2", "I3", "I5"]),
-    set(["I1", "I2", "I3"])
-]
-freFirstItemSet = apriori.generateFirstCandSet(originData)
-
-
-print generateFreItemSet(freFirstItemSet.keys(), originData, 2)
+    print generateFreItemSet(freFirstItemSet.keys(), originData, 2)
 
 
 
