@@ -32,7 +32,7 @@ def edgeSmooth(value):
 
     lastIndex = len(value) - 1
     if lastIndex <= 2: return value
-    for index in range(1, lastIndex - 1):
+    for index in range(1, lastIndex):
         leftDif  = value[index] - value[0]
         rightDif = value[lastIndex] - value[index]
         if leftDif < rightDif:
@@ -76,8 +76,6 @@ def smoothDataSet(gdata, tlength = 10, smoothFuc = avgSmooth):
                 smoothData.append(smoothFuc(sliceSD))
             break
     return smoothData
-
-
 
 if __name__ == "__main__":
     import util.fileoperate as fop

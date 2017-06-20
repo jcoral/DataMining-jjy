@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 # 生产第一候选集
 def generateFirstCandSet(originData):
     candSet = dict()
@@ -68,21 +69,10 @@ def apriori_main(originData, minSupport):
 ################  测试　####################
 
 if __name__ == "__main__":
-    # originData = [
-    #                 set(["I1", "I2", "I5"]),
-    #                 set(["I2", "I4"]),
-    #                 set(["I2", "I3"]),
-    #                 set(["I1", "I2", "I4"]),
-    #                 set(["I1", "I3"]),
-    #                 set(["I2", "I3"]),
-    #                 set(["I1", "I3"]),
-    #                 set(["I1", "I2", "I3", "I5"]),
-    #                 set(["I1", "I2", "I3"])
-    #                 ]
+    import util.sampledata as sd
 
-    import util.fileoperate as fop
-
-    lines = fop.getLines("../dataset/retail.txt")
+    filePath = "../dataset/retail.txt"
+    lines = sd.simapleWithPrecent(filePath=filePath, precent=0.2)
     originData = list()
     for line in lines:
         ls = set(line.split(' '))
