@@ -47,7 +47,7 @@ def generateFreSet(freSet, originData, minSupport):
     return allSet
     
 # 主方法
-def apriori_main(originData, minSupport):
+def apriori_main(originData, minSupport, generateFunc = generateFreSet):
     """
     Apriori主函数
     :param originData: 初始数据[set1, set2, ...]
@@ -61,7 +61,7 @@ def apriori_main(originData, minSupport):
     freSet       = generateFreSet(firstFreSet, originData, supportTimes)
     while len(freSet.keys()) != 0:
         allFreSet.update(freSet)
-        freSet = generateFreSet(freSet, originData, supportTimes)
+        freSet = generateFunc(freSet, originData, supportTimes)
 
     return allFreSet
 
