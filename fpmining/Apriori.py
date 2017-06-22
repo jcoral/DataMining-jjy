@@ -1,103 +1,86 @@
-# -*- coding: utf-8 -*-
+<?php
+/**
+ * @link http://www.yiiframework.com/
+ * @copyright Copyright (c) 2008 Yii Software LLC
+ * @license http://www.yiiframework.com/license/
+ */
 
+namespace yii\console\controllers;
 
-# 生产第一候选集
-def generateFirstCandSet(originData):
-    candSet = dict()
-    def itemsIter(items):
-        for item in items:
-            candSet[item] = candSet.get(item, 0) + 1
-    map(itemsIter, originData)
-    return candSet
+use Yii;
+use yii\base\Application;
+use yii\console\Controller;
+use yii\console\Exception;
+use yii\helpers\Console;
+use yii\helpers\Inflector;
 
+/**
+ * Provides help information about console commands.
+ *
+ * This command displays the available command list in
+ * the application or the detailed instructions about using
+ * a specific command.
+ *
+ * This command can be used as follows on command line:
+ *
+ * ```
+ * yii help [command name]
+ * ```
+ *
+ * In the above, if the command name is not provided, all
+ * available commands will be displayed.
+ *
+ * @property array $commands All available command names. This property is read-only.
+ *
+ * @author Qiang Xue <qiang.xue@gmail.com>
+ * @since 2.0
+ */
+class HelpController extends Controller
+{
+    /**
+     * Displays available commands or the detailed information
+     * about a particular command.
+     *
+     * @param string $command The name of the command to show help about.
+     * If not provided, all available commands will be displayed.
+     * @return integer the exit status
+     * @throws Exception if the command for help is unknown
+     */
+    public function actionIndex($command = null)
+    {
+        if ($command !== null) {
+            $result = Yii::$app->createController($command);
+            if ($result === false) {
+                $name = $this->ansiFormat($command, Console::FG_YELLOW);
+                throw new Exception("No help for unknown command \"$name\".");
+            }
 
-# 过滤候选集
-def filterCandSet(candSet, minSupport):
-    keys = candSet.keys()
-    for key in keys:
-        if candSet[key] < minSupport:
-            del candSet[key]
-    return candSet
+            list($controller, $actionID) = $result;
 
-# 生成频繁一项集
-def generateFirstFreSet(originData, sup):
-    return filterCandSet(generateFirstCandSet(originData), sup)
+            $actions = $this->getActions($controller);
+            if ($actionID !== '' || count($actions) === 1 && $actions[0] === $controller->defaultAction) {
+                $this->getSubCommandHelp($controller, $actionID);
+            } else {
+                $this->getCommandHelp($controller);
+            }
+        } else {
+            $this->getDefaultHelp();
+        }
+    }
 
-# 生成频繁项集
-def generateFreSet(freSet, originData, minSupport):
-    freSetKeys = freSet.keys()
-    itemsLength = len(freSetKeys)
-    allSet = dict()
-    for h in range(itemsLength):
-        for f in range(h + 1, itemsLength):
-            # 合并两个项集
-            hitemSet = set(freSetKeys[h].split(","))
-            fitemSet = set(freSetKeys[f].split(","))
-            itemSet  = hitemSet.union(fitemSet)
+    /**
+     * Returns all available command names.
+     * @return array all available command names
+     */
+    public function getCommands()
+    {
+        $commands = $this->getModuleCommands(Yii::$app);
+        sort($commands);
+        return array_unique($commands);
+    }
 
-            # 查找itemSet出现的次数
-            counter = 0
-            for items in originData:
-                if items.issuperset(itemSet):
-                    counter += 1
-            if counter >= minSupport:
-                items = list(itemSet)
-                items.sort()
-                allSet[",".join(items)] = counter
-    return allSet
-    
-# 主方法
-def apriori_main(originData, minSupport, generateFunc = generateFreSet):
-    """
-    Apriori主函数
-    :param originData: 初始数据[set1, set2, ...]
-    :param minSupport: 0 ... 1
-    :return: 频繁项集
-    """
-
-    supportTimes = minSupport * len(originData)
-    firstFreSet  = generateFirstFreSet(originData, supportTimes)
-    allFreSet    = firstFreSet.copy()
-    freSet       = generateFreSet(firstFreSet, originData, supportTimes)
-    while len(freSet.keys()) != 0:
-        allFreSet.update(freSet)
-        freSet = generateFunc(freSet, originData, supportTimes)
-
-    return allFreSet
-
-def loadAprioriData(precent = 0.5):
-    import util.sampledata as sd
-
-    filePath = "../dataset/retail.txt"
-    lines = sd.simapleWithPrecent(filePath=filePath, precent=0.2)
-    originData = list()
-    for line in lines:
-        ls = set(line.split(' '))
-        ls.remove('')
-        originData.append(ls)
-    return originData
-
-
-################  测试　####################
-
-if __name__ == "__main__":
-
-
-    print apriori_main(loadAprioriData(0.2), 0.1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * Returns an array of commands an their descriptions.
+     * @return array all available commands as keys and their description as values.
+     */
+    protected function getCommandDe

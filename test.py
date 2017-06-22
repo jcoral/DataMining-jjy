@@ -10,12 +10,6 @@ md51 = hashlib.md5()
 md51.update('123')
 print md51.hexdigest()
 
+from classify.dataelement import DataElement
 
-
-
-
-
-
-
-
-
+dm = "asdasd123"
